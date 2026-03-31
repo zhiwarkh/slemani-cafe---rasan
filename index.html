@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="ku" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>کافێ سلێمانی ڕەسەن | مینیوی دیجیتاڵی</title>
+    <!-- بەکارهێنانی Tailwind CSS بۆ دیزاین -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- بەکارهێنانی فۆنتی گونجاو -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --font-ku: 'Noto Kufi Arabic', sans-serif;
+            --font-en: 'Outfit', sans-serif;
+        }
+        body {
+            font-family: var(--font-ku);
+            background-color: #f3f4f6;
+        }
+        html[lang="en"] body {
+            font-family: var(--font-en);
+        }
+        /* شاردنەوەی سکڕۆڵبار بۆ بەشی جۆرەکان بەڵام هێشتنەوەی توانای سکڕۆڵکردن */
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        
+        /* ئەنیمەیشنی هاتنەسەرەوە بۆ پەنجەرەی داواکارییەکان */
+        @keyframes slideUp {
+            from { transform: translateY(100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .animate-slide-up {
+            animation: slideUp 0.3s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="antialiased text-gray-800">
+
+    <!-- کۆنتەینەری سەرەکی -->
+    <main class="max-w-md mx-auto bg-gray-50 min-h-screen shadow-2xl relative overflow-hidden">
+        
+        <!-- وێنەی کەڤەر (Hero Image) -->
+        <div class="relative h-60 w-full">
+            <img src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=1000&auto=format&fit=crop" alt="Cafe Cover" class="w-full h-full object-cover">
+            <div class="absolute inset-0 bg-gradient-to-b from-black/50 to-black/10"></div>
+        </div>
+        
+        <!-- لۆگۆ و زانیاری کافێ (لە ناوەڕاستدا بە شێوەی کارت) -->
+        <div class="relative -mt-20 px-4 flex flex-col items-center z-10">
+            <div class="bg-white/95 backdrop-blur-md px-6 py-6 rounded-3xl shadow-xl flex flex-col items-center justify-center w-11/12 border border-white">
+                <!-- وێنەی یەکەم (کوپەکە و ڕەسەن) -->
+                <img src="image_4ca577.png" alt="ڕەسەن" onerror="this.src='https://images.unsplash.com/photo-1497935586351-b67a49e012bf?q=80&w=100&auto=format&fit=crop'; this.className='h-24 w-24 object-cover rounded-full mb-3';" class="h-28 object-contain drop-shadow-sm mb-2 transition-transform hover:scale-105">
+                
+                <!-- هەڵبژاردنی زمان -->
+                <div class="flex gap-2 mt-2 bg-gray-100 p-1 rounded-full w-full justify-center">
+                    <button onclick="setLanguage('ku')" id="btn-lang-ku" class="lang-btn flex-1 py-1.5 px-3 rounded-full text-xs font-bold bg-white text-orange-500 shadow-sm transition-all">کوردی</button>
+                    <button onclick="setLanguage('ar')" id="btn-lang-ar" class="lang-btn flex-1 py-1.5 px-3 rounded-full text-xs font-bold text-gray-500 hover:text-gray-800 transition-all">عربي</button>
+                    <button onclick="setLanguage('en')" id="btn-lang-en" class="lang-btn flex-1 py-1.5 px-3 rounded-full text-xs font-bold text-gray-500 hover:text-gray-800 transition-all">English</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- بەشی گەڕان -->
+        <div class="px-4 pt-6 pb-2">
+            <div class="relative">
+                <input type="text" id="searchInput" placeholder="بگەڕێ بۆ خواردن یان خواردنەوە..." class="w-full bg-white border border-gray-200 text-sm rounded-2xl py-3 pr-11 pl-4 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all shadow-sm">
+                <svg id="searchIcon" class="w-5 h-5 absolute right-4 top-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            </div>
+        </div>
+
+        <!-- پەنجەرەی جۆرەکان (Categories) -->
+        <div class="sticky top-0 z-20 glass-effect border-b border-gray-100 pb-2 pt-2">
+            <div class="flex overflow-x-auto hide-scrollbar gap-3 px-4 py-2" id="categoryTabs">
+                <!-- دوگمەی جۆرەکان لێرەدا دروست دەکرێن -->
+            </div>
+        </div>
+
+        <!-- لیستی ئایتمەکان (Menu Items) -->
+        <div class="p-4 space-y-4 pb-24" id="menuContainer">
+            <!-- کاردەکانی مینیو لێرەدا دروست دەکرێن -->
+        </div>
+
+        <!-- دوگمەی سەرئاوکەوتوو بۆ سەبەتەی داواکارییەکان -->
+        <button id="cartFab" onclick="toggleCart()" class="hidden fixed bottom-6 right-6 z-40 bg-orange-500 text-white rounded-2xl p-4 shadow-xl shadow-orange-500/30 hover:bg-orange-600 hover:scale-105 transition-all duration-300">
+            <div class="relative">
+                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                <span id="cartCount" class="absolute -top-3 -right-3 bg-red-500 text-white text-xs font-bold rounded-full h-6 w-6 flex items-center justify-center border-2 border-orange-500 shadow-sm">0</span>
+            </div>
+        </button>
+
+        <!-- پەنجەرەی داواکارییەکان (Cart Modal) -->
+        <div id="cartModal" class="hidden fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm transition-opacity">
+            <div class="bg-white w-full sm:max-w-md h-[80vh] sm:h-auto sm:max-h-[85vh] rounded-t-3xl sm:rounded-3xl shadow-2xl flex flex-col relative animate-slide-up">
+                
+                <!-- سەری پەنجەرەکە -->
+                <div class="flex justify-between items-center p-5 border-b border-gray-100">
+                    <div>
+                        <h2 id="cartTitle" class="text-xl font-bold text-gray-800">داواکارییەکانم</h2>
+                        <p id="cartSubtitle" class="text-xs text-gray-500 mt-1">ئەم لیستە پیشانی کاپتنەکە بدە</p>
+                    </div>
+                    <button onclick="toggleCart()" class="text-gray-400 hover:text-red-500 bg-gray-50 hover:bg-red-50 rounded-full p-2.5 transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                </div>
+
+                <!-- لیستی هەڵبژێردراوەکان -->
+                <div id="cartItemsContainer" class="p-5 flex-1 overflow-y-auto space-y-2">
+                    <!-- ئایتمەکانی سەبەتە لێرەدا دەردەکەون -->
+                </div>
+
+                <!-- کۆی گشتی -->
+                <div class="p-6 bg-gray-50 border-t border-gray-200 sm:rounded-b-3xl">
+                    <div class="flex justify-between items-center">
+                        <span id="cartTotalLabel" class="text-gray-600 font-bold text-lg">کۆی گشتی:</span>
+                        <span id="cartTotal" class="text-2xl font-black text-orange-600">0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        // زانیارییەکانی دەقەکانی ڕووکار (Translations for UI)
+        const uiTranslations = {
+            ku: {
+                searchPlaceholder: 'بگەڕێ بۆ خواردن یان خواردنەوە...',
+                emptySearch: 'هیچ ئایتمێک نەدۆزرایەوە!',
+                cartTitle: 'داواکارییەکانم',
+                cartSubtitle: 'ئەم لیستە پیشانی کاپتنەکە بدە',
+                total: 'کۆی گشتی:',
+                currency: 'د.ع'
+            },
+            ar: {
+                searchPlaceholder: 'ابحث عن طعام أو شراب...',
+                emptySearch: 'لم يتم العثور على أي عنصر!',
+                cartTitle: 'طلباتي',
+                cartSubtitle: 'أظهر هذه القائمة للكابتن',
+                total: 'المجموع:',
+                currency: 'د.ع'
+            },
+            en: {
+                searchPlaceholder: 'Search for food or drinks...',
+                emptySearch: 'No items found!',
+                cartTitle: 'My Orders',
+                cartSubtitle: 'Show this list to the captain',
+                total: 'Total:',
+                currency: 'IQD'
+            }
+        };
+
+        // داتای مینیوەکە بە هەرسێ زمان
+        const menuData = [
+            // Cakes
+            { id: 1, name: {ku: 'ترالیجە', ar: 'تريليتشا', en: 'Trilece'}, description: {ku: 'کێکی شیری بەتام و نەرم', ar: 'كيكة الحليب اللذيذة', en: 'Delicious soft milk cake'}, price: '3,500', category: 'cakes', image: 'https://images.unsplash.com/photo-1464305795204-6f5bbfc7fb81?q=80&w=300&auto=format&fit=crop' },
+            { id: 2, name: {ku: 'تیرامیسو', ar: 'تيراميسو', en: 'Tiramisu'}, description: {ku: 'شیرینییەکی ئیتاڵی بە تامی قاوە', ar: 'حلوى إيطالية بنكهة القهوة', en: 'Italian coffee-flavored dessert'}, price: '3,500', category: 'cakes', image: 'https://images.unsplash.com/photo-1571115177098-24ec42ed204d?q=80&w=300&auto=format&fit=crop' },
+            { id: 3, name: {ku: 'محەلەبی فرن', ar: 'محلبي بالفرن', en: 'Baked Pudding'}, description: {ku: 'محەلەبی برژاو لە فڕن', ar: 'محلبي محمر بالفرن', en: 'Oven-baked milk pudding'}, price: '1,000', category: 'cakes', image: 'https://images.unsplash.com/photo-1558961363-fa8fdf82db35?q=80&w=300&auto=format&fit=crop' },
+            { id: 4, name: {ku: 'چۆکلیت کێک', ar: 'كيكة الشوكولاتة', en: 'Chocolate Cake'}, description: {ku: 'کێکی شوکولاتەی تەڕ و بەتام', ar: 'كيكة الشوكولاتة الرطبة واللذيذة', en: 'Moist and delicious chocolate cake'}, price: '3,500', category: 'cakes', image: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?q=80&w=300&auto=format&fit=crop' },
+            { id: 5, name: {ku: 'چیز کێک', ar: 'تشيز كيك', en: 'Cheesecake'}, description: {ku: 'چیزکێکی کلاسیک', ar: 'تشيز كيك كلاسيكي', en: 'Classic cheesecake'}, price: '4,000', category: 'cakes', image: 'https://images.unsplash.com/photo-1533134242443-d4fd215305ad?q=80&w=300&auto=format&fit=crop' },
+
+            // Pancakes
+            { id: 6, name: {ku: 'پەنکەیکی سادە', ar: 'بان كيك سادة', en: 'Plain Pancake'}, description: {ku: 'پەنکەیکی نەرم بە شێوازی کلاسیک', ar: 'بان كيك طري كلاسيكي', en: 'Classic soft pancakes'}, price: '2,500', category: 'pancakes', image: 'https://images.unsplash.com/photo-1528207776546-384cb11a9245?q=80&w=300&auto=format&fit=crop' },
+            { id: 7, name: {ku: 'پەنکەیک بە مۆز', ar: 'بان كيك بالموز', en: 'Banana Pancake'}, description: {ku: 'پەنکەیک بە پارچەی مۆزەوە', ar: 'بان كيك مع قطع الموز', en: 'Pancakes with banana slices'}, price: '3,000', category: 'pancakes', image: 'https://images.unsplash.com/photo-1506084868230-bb9d95c24759?q=80&w=300&auto=format&fit=crop' },
+            { id: 8, name: {ku: 'پەنکەیک بە شلیک', ar: 'بان كيك بالفراولة', en: 'Strawberry Pancake'}, description: {ku: 'پەنکەیک بە شلیکی فرێشەوە', ar: 'بان كيك مع فراولة طازجة', en: 'Pancakes with fresh strawberries'}, price: '3,500', category: 'pancakes', image: 'https://images.unsplash.com/photo-1565299585323-38d6b0865b47?q=80&w=300&auto=format&fit=crop' },
+            { id: 9, name: {ku: 'پەنکەیک بە فستق', ar: 'بان كيك بالفستق', en: 'Pistachio Pancake'}, description: {ku: 'پەنکەیک بە سۆس و وردەی فستق', ar: 'بان كيك مع صوص وقطع الفستق', en: 'Pancakes with pistachio sauce and nuts'}, price: '3,500', category: 'pancakes', image: 'https://images.unsplash.com/photo-1554520735-0a6b8b6ce8b7?q=80&w=300&auto=format&fit=crop' },
+            { id: 10, name: {ku: 'پەنکەیک بە کیندەر', ar: 'بان كيك كيندر', en: 'Kinder Pancake'}, description: {ku: 'پەنکەیک بە سۆس و پارچەی شوکولاتەی کیندەر', ar: 'بان كيك مع صوص وقطع شوكولاتة كيندر', en: 'Pancakes with Kinder chocolate'}, price: '4,000', category: 'pancakes', image: 'https://images.unsplash.com/photo-1620589125156-fd5028c5e05b?q=80&w=300&auto=format&fit=crop' },
+            { id: 11, name: {ku: 'پەنکەیکی میکس', ar: 'بان كيك مكس', en: 'Mix Pancake'}, description: {ku: 'پەنکەیک بە تێکەڵەی میوە و سۆسەکان', ar: 'بان كيك مع فواكه مشكلة وصوص', en: 'Pancakes with mixed fruits and sauces'}, price: '5,000', category: 'pancakes', image: 'https://images.unsplash.com/photo-1559841644-08984562005a?q=80&w=300&auto=format&fit=crop' },
+
+            // Crepes
+            { id: 12, name: {ku: 'کرێپی سادە', ar: 'كريب سادة', en: 'Plain Crepe'}, description: {ku: 'کرێپی نەرم و تەنک', ar: 'كريب رقيق وطري', en: 'Soft and thin crepe'}, price: '2,000', category: 'crepes', image: 'https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?q=80&w=300&auto=format&fit=crop' },
+            { id: 13, name: {ku: 'کرێپ بە مۆز', ar: 'كريب بالموز', en: 'Banana Crepe'}, description: {ku: 'کرێپ بە پارچەی مۆز و سۆسەوە', ar: 'كريب مع موز وصوص', en: 'Crepe with banana and sauce'}, price: '2,000', category: 'crepes', image: 'https://images.unsplash.com/photo-1550411294-f179c3cf0ab4?q=80&w=300&auto=format&fit=crop' },
+            { id: 14, name: {ku: 'کرێپ بە شلیک', ar: 'كريب بالفراولة', en: 'Strawberry Crepe'}, description: {ku: 'کرێپ بە شلیکی فرێشەوە', ar: 'كريب مع فراولة طازجة', en: 'Crepe with fresh strawberries'}, price: '3,000', category: 'crepes', image: 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?q=80&w=300&auto=format&fit=crop' },
+            { id: 15, name: {ku: 'کرێپ بە فستق', ar: 'كريب بالفستق', en: 'Pistachio Crepe'}, description: {ku: 'کرێپ بە سۆس و وردەی فستقەوە', ar: 'كريب بصوص وقطع الفستق', en: 'Crepe with pistachio sauce and nuts'}, price: '3,500', category: 'crepes', image: 'https://images.unsplash.com/photo-1584305574635-42289c6d3211?q=80&w=300&auto=format&fit=crop' },
+            { id: 16, name: {ku: 'کرێپ بە کیندەر', ar: 'كريب كيندر', en: 'Kinder Crepe'}, description: {ku: 'کرێپ بە شوکولاتەی کیندەرەوە', ar: 'كريب بشوكولاتة كيندر', en: 'Crepe with Kinder chocolate'}, price: '4,000', category: 'crepes', image: 'https://images.unsplash.com/photo-1601362840469-51e4d8d58785?q=80&w=300&auto=format&fit=crop' },
+            { id: 17, name: {ku: 'کرێپ بە لۆتەس', ar: 'كريب لوتس', en: 'Lotus Crepe'}, description: {ku: 'کرێپ بە سۆس و بسکویتی لۆتەس', ar: 'كريب بصوص وبسكويت لوتس', en: 'Crepe with Lotus biscoff and sauce'}, price: '4,000', category: 'crepes', image: 'https://images.unsplash.com/photo-1627308594190-7c2a5dc949a2?q=80&w=300&auto=format&fit=crop' },
+            { id: 18, name: {ku: 'کرێپی میکس', ar: 'كريب مكس', en: 'Mix Crepe'}, description: {ku: 'کرێپ بە تێکەڵەی میوە و سۆسەکان', ar: 'كريب بفواكه وصوص مشكل', en: 'Crepe with mixed fruits and sauces'}, price: '5,000', category: 'crepes', image: 'https://images.unsplash.com/photo-1589333550392-4934df7b4cba?q=80&w=300&auto=format&fit=crop' },
+
+            // Waffles
+            { id: 19, name: {ku: 'وافلی سادە', ar: 'وافل سادة', en: 'Plain Waffle'}, description: {ku: 'وافلی گەرم و نەرم', ar: 'وافل دافئ وطري', en: 'Warm and soft waffle'}, price: '2,500', category: 'waffles', image: 'https://images.unsplash.com/photo-1562376552-0d160a2f9f77?q=80&w=300&auto=format&fit=crop' },
+            { id: 20, name: {ku: 'وافل بە مۆز', ar: 'وافل بالموز', en: 'Banana Waffle'}, description: {ku: 'وافل بە پارچەی مۆز و سۆسەوە', ar: 'وافل مع موز وصوص', en: 'Waffle with banana and sauce'}, price: '3,000', category: 'waffles', image: 'https://images.unsplash.com/photo-1581458021074-ce444ce5a5da?q=80&w=300&auto=format&fit=crop' },
+            { id: 21, name: {ku: 'وافل بە شلیک', ar: 'وافل بالفراولة', en: 'Strawberry Waffle'}, description: {ku: 'وافل بە شلیکی فرێشەوە', ar: 'وافل مع فراولة طازجة', en: 'Waffle with fresh strawberries'}, price: '3,500', category: 'waffles', image: 'https://images.unsplash.com/photo-1504113888839-1c8eb50233d3?q=80&w=300&auto=format&fit=crop' },
+            { id: 22, name: {ku: 'وافل بە فستق', ar: 'وافل بالفستق', en: 'Pistachio Waffle'}, description: {ku: 'وافل بە سۆس و وردەی فستقەوە', ar: 'وافل بصوص وقطع الفستق', en: 'Waffle with pistachio sauce and nuts'}, price: '4,000', category: 'waffles', image: 'https://images.unsplash.com/photo-1622979203387-73d8eb2c1615?q=80&w=300&auto=format&fit=crop' },
+            { id: 23, name: {ku: 'وافل بە کیندەر', ar: 'وافل كيندر', en: 'Kinder Waffle'}, description: {ku: 'وافل بە شوکولاتەی کیندەرەوە', ar: 'وافل بشوكولاتة كيندر', en: 'Waffle with Kinder chocolate'}, price: '4,500', category: 'waffles', image: 'https://images.unsplash.com/photo-1556708682-127c5982e5b7?q=80&w=300&auto=format&fit=crop' },
+            { id: 24, name: {ku: 'وافلی میکس', ar: 'وافل مكس', en: 'Mix Waffle'}, description: {ku: 'وافل بە تێکەڵەی میوە و سۆسەکان', ar: 'وافل بفواكه وصوص مشكل', en: 'Waffle with mixed fruits and sauces'}, price: '5,000', category: 'waffles', image: 'https://images.unsplash.com/photo-1584305417436-5b410f769df1?q=80&w=300&auto=format&fit=crop' },
+
+            // Hot Drinks
+            { id: 25, name: {ku: 'ئیسپرێسۆ', ar: 'اسبريسو', en: 'Espresso'}, description: {ku: 'شۆتێکی خەست و پڕ وزە', ar: 'شوت مركز ومفعم بالطاقة', en: 'Rich and energetic shot'}, price: '2,000', category: 'hot_drinks', image: 'https://images.unsplash.com/photo-1510591509098-f4fdc6d0ff04?q=80&w=300&auto=format&fit=crop' },
+            { id: 26, name: {ku: 'دەبڵ ئیسپرێسۆ', ar: 'دبل اسبريسو', en: 'Double Espresso'}, description: {ku: 'دوو شۆت قاوەی خەست', ar: 'دبل شوت قهوة مركزة', en: 'Two shots of rich espresso'}, price: '3,500', category: 'hot_drinks', image: 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?q=80&w=300&auto=format&fit=crop' },
+            { id: 27, name: {ku: 'ئەمێریکانۆ', ar: 'أمريكانو', en: 'Americano'}, description: {ku: 'ئیسپرێسۆ لەگەڵ ئاوی گەرم', ar: 'اسبريسو مع ماء حار', en: 'Espresso with hot water'}, price: '3,000', category: 'hot_drinks', image: 'https://images.unsplash.com/photo-1551030173-122aabc4489c?q=80&w=300&auto=format&fit=crop' },
+            { id: 28, name: {ku: 'قاوەی عەرەبی', ar: 'قهوة عربية', en: 'Arabic Coffee'}, description: {ku: 'قاوەی عەرەبی ڕەسەن', ar: 'قهوة عربية أصيلة', en: 'Authentic Arabic coffee'}, price: '2,000', category: 'hot_drinks', image: 'https://images.unsplash.com/photo-1574359411659-15573a27fd0c?q=80&w=300&auto=format&fit=crop' },
+            { id: 29, name: {ku: 'قاوەی تورکی', ar: 'قهوة تركية', en: 'Turkish Coffee'}, description: {ku: 'قاوەی تورکی خەست لەسەر لم', ar: 'قهوة تركية مطبوخة على الرمل', en: 'Rich Turkish coffee cooked on sand'}, price: '2,000', category: 'hot_drinks', image: 'https://images.unsplash.com/photo-1544465544-1b71aee9dfa3?q=80&w=300&auto=format&fit=crop' },
+            { id: 30, name: {ku: 'قاوەی چۆکلیتی', ar: 'قهوة بالشوكولاتة', en: 'Chocolate Coffee'}, description: {ku: 'تێکەڵەی قاوە و شوکولاتە', ar: 'مزيج القهوة والشوكولاتة', en: 'Blend of coffee and chocolate'}, price: '2,000', category: 'hot_drinks', image: 'https://images.unsplash.com/photo-1541167760496-1628856ab772?q=80&w=300&auto=format&fit=crop' },
+            { id: 31, name: {ku: 'لاتێ', ar: 'لاتيه', en: 'Latte'}, description: {ku: 'ئیسپرێسۆ لەگەڵ شیری گەرمی کەفدار', ar: 'اسبريسو مع حليب حار ورغوة', en: 'Espresso with steamed milk'}, price: '2,500', category: 'hot_drinks', image: 'https://images.unsplash.com/photo-1570968915860-54d5c301fa9f?q=80&w=300&auto=format&fit=crop' },
+            { id: 32, name: {ku: 'ماکیاتۆ', ar: 'ماكياتو', en: 'Macchiato'}, description: {ku: 'ئیسپرێسۆ بە کەفێکی کەمی شیرەوە', ar: 'اسبريسو مع القليل من رغوة الحليب', en: 'Espresso with a dash of frothy milk'}, price: '2,500', category: 'hot_drinks', image: 'https://images.unsplash.com/photo-1485808191679-5f86510681a2?q=80&w=300&auto=format&fit=crop' },
+            { id: 33, name: {ku: 'لاتێ ماکیاتۆ', ar: 'لاتيه ماكياتو', en: 'Latte Macchiato'}, description: {ku: 'شیر لەگەڵ شۆتێکی ئیسپرێسۆ', ar: 'حليب مع شوت اسبريسو', en: 'Milk with a shot of espresso'}, price: '3,000', category: 'hot_drinks', image: 'https://images.unsplash.com/photo-1585494156145-1c60a4fe952b?q=80&w=300&auto=format&fit=crop' },
+            { id: 34, name: {ku: 'لۆنگ', ar: 'لونغو', en: 'Lungo'}, description: {ku: 'ئیسپرێسۆی درێژتر (Lungo)', ar: 'اسبريسو طويل', en: 'Longer espresso pull'}, price: '3,000', category: 'hot_drinks', image: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?q=80&w=300&auto=format&fit=crop' },
+            { id: 35, name: {ku: 'ڕیسترێتۆ', ar: 'ريستريتو', en: 'Ristretto'}, description: {ku: 'ئیسپرێسۆی زۆر خەست و کورت', ar: 'اسبريسو قصير ومركز', en: 'Short and strong espresso'}, price: '2,500', category: 'hot_drinks', image: 'https://images.unsplash.com/photo-1510442650500-93217e634e4a?q=80&w=300&auto=format&fit=crop' },
+            { id: 36, name: {ku: 'کاپوچینۆ', ar: 'كابوتشينو', en: 'Cappuccino'}, description: {ku: 'ئێسپرێسۆ بە شیری گەرم و کەفێکی زۆرەوە', ar: 'اسبريسو مع حليب حار ورغوة كثيفة', en: 'Espresso with milk and thick foam'}, price: '3,000', category: 'hot_drinks', image: 'https://images.unsplash.com/photo-1534778101976-62847782c213?q=80&w=300&auto=format&fit=crop' },
+            { id: 37, name: {ku: 'مۆکا', ar: 'موكا', en: 'Mocha'}, description: {ku: 'قاوە و شیر لەگەڵ سۆسی شوکولاتە', ar: 'قهوة وحليب مع صوص الشوكولاتة', en: 'Coffee and milk with chocolate sauce'}, price: '3,000', category: 'hot_drinks', image: 'https://images.unsplash.com/photo-1572442388796-11668a67e53d?q=80&w=300&auto=format&fit=crop' },
+            { id: 38, name: {ku: 'هۆت چۆکۆلیت', ar: 'هوت شوكليت', en: 'Hot Chocolate'}, description: {ku: 'شیر و شوکولاتەی گەرم و خەست', ar: 'حليب وشوكولاتة ساخنة ومركزة', en: 'Rich hot milk and chocolate'}, price: '2,500', category: 'hot_drinks', image: 'https://images.unsplash.com/photo-1542990253-0d0f5be5f0ed?q=80&w=300&auto=format&fit=crop' },
+            { id: 39, name: {ku: 'چای سەوز', ar: 'شاي أخضر', en: 'Green Tea'}, description: {ku: 'چای سەوزی سروشتی بۆ ئارامبوونەوە', ar: 'شاي أخضر طبيعي للاسترخاء', en: 'Natural relaxing green tea'}, price: '1,000', category: 'hot_drinks', image: 'https://images.unsplash.com/photo-1627492221038-ceec0ce837e1?q=80&w=300&auto=format&fit=crop' },
+            { id: 40, name: {ku: 'چا', ar: 'شاي', en: 'Black Tea'}, description: {ku: 'چای ڕەشی کاڵ کراو لەسەر خەڵووز', ar: 'شاي أسود مخمر على الفحم', en: 'Charcoal brewed black tea'}, price: '1,500', category: 'hot_drinks', image: 'https://images.unsplash.com/photo-1576092768241-dec231879fc3?q=80&w=300&auto=format&fit=crop' },
+            { id: 41, name: {ku: 'قەزوان', ar: 'قهوة كردية (قزوان)', en: 'Kurdish Coffee (Qazwan)'}, description: {ku: 'قاوەی قەزوانی کوردی', ar: 'قهوة حبة الخضراء الكردية', en: 'Traditional Kurdish pistachio coffee'}, price: '2,000', category: 'hot_drinks', image: 'https://images.unsplash.com/photo-1559525839-b184a4d698c7?q=80&w=300&auto=format&fit=crop' },
+            { id: 42, name: {ku: 'شیر', ar: 'حليب', en: 'Milk'}, description: {ku: 'کوپێک شیری گەرم', ar: 'كوب حليب دافئ', en: 'A cup of warm milk'}, price: '1,500', category: 'hot_drinks', image: 'https://images.unsplash.com/photo-1550583724-b2692b85b150?q=80&w=300&auto=format&fit=crop' },
+            { id: 43, name: {ku: 'میکسی تایبەت', ar: 'مكس خاص', en: 'Special Mix'}, description: {ku: 'تێکەڵەیەکی تایبەتی کافێیەکە', ar: 'مزيج خاص بالمقهى', en: 'Cafe special hot drink mix'}, price: '2,500', category: 'hot_drinks', image: 'https://images.unsplash.com/photo-1497935586351-b67a49e012bf?q=80&w=300&auto=format&fit=crop' },
+            { id: 44, name: {ku: 'لاتێ بە سیرەپ', ar: 'لاتيه بسيرب', en: 'Syrup Latte'}, description: {ku: 'لاتێی گەرم بە تامی سیرەپی دڵخوازت', ar: 'لاتيه ساخن بنكهة السيرب المفضلة', en: 'Hot latte with your choice of syrup'}, price: '2,500', category: 'hot_drinks', image: 'https://images.unsplash.com/photo-1461023058943-07fcbe16d735?q=80&w=300&auto=format&fit=crop' },
+
+            // Cold Drinks
+            { id: 45, name: {ku: 'ئایس لاتێ', ar: 'آيس لاتيه', en: 'Iced Latte'}, description: {ku: 'ئیسپرێسۆ بە شیری سارد و سەهۆڵەوە', ar: 'اسبريسو مع حليب بارد وثلج', en: 'Espresso with cold milk and ice'}, price: '3,000', category: 'cold_drinks', image: 'https://images.unsplash.com/photo-1517701550927-30cf4ba1dba5?q=80&w=300&auto=format&fit=crop' },
+            { id: 46, name: {ku: 'ئایس ئەمێریکانۆ', ar: 'آيس أمريكانو', en: 'Iced Americano'}, description: {ku: 'ئیسپرێسۆی سارد کراوە', ar: 'اسبريسو بارد', en: 'Cold brewed espresso'}, price: '3,000', category: 'cold_drinks', image: 'https://images.unsplash.com/photo-1513244670057-a379bd4fa0c5?q=80&w=300&auto=format&fit=crop' },
+            { id: 47, name: {ku: 'ئایس سپانیش لاتێ', ar: 'آيس سبانيش لاتيه', en: 'Iced Spanish Latte'}, description: {ku: 'لاتێی سارد بە شیری خەستەوە', ar: 'لاتيه بارد مع حليب مكثف', en: 'Iced latte with condensed milk'}, price: '3,500', category: 'cold_drinks', image: 'https://images.unsplash.com/photo-1461023058943-07fcbe16d735?q=80&w=300&auto=format&fit=crop' },
+            { id: 48, name: {ku: 'ئایس مۆکا', ar: 'آيس موكا', en: 'Iced Mocha'}, description: {ku: 'قاوە و شوکولاتەی سارد بە سەهۆڵەوە', ar: 'قهوة وشوكولاتة باردة مع ثلج', en: 'Cold coffee and chocolate with ice'}, price: '3,500', category: 'cold_drinks', image: 'https://images.unsplash.com/photo-1572442388796-11668a67e53d?q=80&w=300&auto=format&fit=crop' },
+            { id: 49, name: {ku: 'ئایس چۆکلیت', ar: 'آيس شوكليت', en: 'Iced Chocolate'}, description: {ku: 'شیر و شوکولاتەی سارد', ar: 'حليب وشوكولاتة باردة', en: 'Cold milk and chocolate'}, price: '3,000', category: 'cold_drinks', image: 'https://images.unsplash.com/photo-1602495632360-6188e63a8a3a?q=80&w=300&auto=format&fit=crop' },
+            { id: 50, name: {ku: 'ئایس نێسکافە', ar: 'آيس نسكافيه', en: 'Iced Nescafe'}, description: {ku: 'نێسکافەی سارد و کەفدار', ar: 'نسكافيه بارد برغوة', en: 'Cold and frothy Nescafe'}, price: '3,500', category: 'cold_drinks', image: 'https://images.unsplash.com/photo-1499961024600-ad094db6050f?q=80&w=300&auto=format&fit=crop' },
+            { id: 51, name: {ku: 'ئایس بلۆکۆفی', ar: 'آيس بلو كوفي', en: 'Iced Blocoffee'}, description: {ku: 'قاوەی سارد بە تێکەڵەیەکی تایبەت', ar: 'قهوة باردة بخلطة خاصة', en: 'Cold coffee with special mix'}, price: '4,000', category: 'cold_drinks', image: 'https://images.unsplash.com/photo-1558500206-8dce28271791?q=80&w=300&auto=format&fit=crop' },
+            { id: 52, name: {ku: 'فرێدۆ ئیسپرێسۆ', ar: 'فريدو اسبريسو', en: 'Freddo Espresso'}, description: {ku: 'ئیسپرێسۆی سارد بە کەفی تایبەتەوە', ar: 'اسبريسو بارد برغوة خاصة', en: 'Cold espresso with special foam'}, price: '3,000', category: 'cold_drinks', image: 'https://images.unsplash.com/photo-1497515114629-f71d768fd07c?q=80&w=300&auto=format&fit=crop' },
+            { id: 53, name: {ku: 'فرێدۆ کاپوچینۆ', ar: 'فريدو كابوتشينو', en: 'Freddo Cappuccino'}, description: {ku: 'کاپوچینۆی سارد و کەفدار', ar: 'كابوتشينو بارد ورغوي', en: 'Cold and frothy cappuccino'}, price: '3,000', category: 'cold_drinks', image: 'https://images.unsplash.com/photo-1495474472200-c8f2ba578279?q=80&w=300&auto=format&fit=crop' },
+            { id: 54, name: {ku: 'ئایس لاتێ کەرەمیل', ar: 'آيس لاتيه كراميل', en: 'Iced Caramel Latte'}, description: {ku: 'ئایس لاتێ بە سۆسی کەرەمیلەوە', ar: 'آيس لاتيه مع صوص كراميل', en: 'Iced latte with caramel sauce'}, price: '3,500', category: 'cold_drinks', image: 'https://images.unsplash.com/photo-1553177595-4de6bb080e59?q=80&w=300&auto=format&fit=crop' },
+            { id: 55, name: {ku: 'ئایس لاتێ ڤانێلا', ar: 'آيس لاتيه فانيلا', en: 'Iced Vanilla Latte'}, description: {ku: 'ئایس لاتێ بە تامی ڤانێلا', ar: 'آيس لاتيه بنكهة الفانيلا', en: 'Iced latte with vanilla flavor'}, price: '3,500', category: 'cold_drinks', image: 'https://images.unsplash.com/photo-1578314675249-a6910f80cc4e?q=80&w=300&auto=format&fit=crop' },
+            { id: 56, name: {ku: 'ئایس کۆکۆنۆت لاتێ', ar: 'آيس لاتيه جوز الهند', en: 'Iced Coconut Latte'}, description: {ku: 'ئایس لاتێ بە شیری گوێزی هیندی', ar: 'آيس لاتيه بحليب جوز الهند', en: 'Iced latte with coconut milk'}, price: '3,500', category: 'cold_drinks', image: 'https://images.unsplash.com/photo-1497515114629-f71d768fd07c?q=80&w=300&auto=format&fit=crop' },
+            { id: 57, name: {ku: 'ئایس کوڵ لاتێ', ar: 'آيس كول لاتيه', en: 'Iced Cool Latte'}, description: {ku: 'قاوەی ساردی تایبەت', ar: 'قهوة باردة خاصة', en: 'Special iced coffee'}, price: '3,500', category: 'cold_drinks', image: 'https://images.unsplash.com/photo-1517701550927-30cf4ba1dba5?q=80&w=300&auto=format&fit=crop' },
+            { id: 58, name: {ku: 'فراپێ یۆنانی', ar: 'فرابيه يوناني', en: 'Greek Frappe'}, description: {ku: 'فراپێی سارد بە شێوازی یۆنانی', ar: 'فرابيه بارد على الطريقة اليونانية', en: 'Cold Greek style frappe'}, price: '3,000', category: 'cold_drinks', image: 'https://images.unsplash.com/photo-1572442388796-11668a67e53d?q=80&w=300&auto=format&fit=crop' },
+
+            // Mojitos
+            { id: 59, name: {ku: 'مۆهیتۆی کلاسیک', ar: 'موهيتو كلاسيك', en: 'Classic Mojito'}, description: {ku: 'لێمۆ و نەعناع لەگەڵ سەهۆڵ', ar: 'ليمون ونعناع مع ثلج', en: 'Lemon and mint with ice'}, price: '3,000', category: 'mojitos', image: 'https://images.unsplash.com/photo-1551538827-9c037cb4f32a?q=80&w=300&auto=format&fit=crop' },
+            { id: 60, name: {ku: 'مۆهیتۆی شلک', ar: 'موهيتو فراولة', en: 'Strawberry Mojito'}, description: {ku: 'مۆهیتۆ بە تامی شلیکی فرێش', ar: 'موهيتو بنكهة الفراولة الطازجة', en: 'Mojito with fresh strawberries'}, price: '4,000', category: 'mojitos', image: 'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?q=80&w=300&auto=format&fit=crop' },
+            { id: 61, name: {ku: 'مۆهیتۆی بلاک', ar: 'موهيتو بلاكبيري', en: 'Blackberry Mojito'}, description: {ku: 'مۆهیتۆ بە تامی بلاک بێری', ar: 'موهيتو بنكهة التوت الأسود', en: 'Mojito with blackberry flavor'}, price: '4,000', category: 'mojitos', image: 'https://images.unsplash.com/photo-1595981267035-7b04d84b5258?q=80&w=300&auto=format&fit=crop' },
+            { id: 62, name: {ku: 'مۆهیتۆی بلۆ کوراسۆ', ar: 'موهيتو بلو كوراساو', en: 'Blue Curacao Mojito'}, description: {ku: 'مۆهیتۆی شینی تایبەت', ar: 'موهيتو أزرق خاص', en: 'Special blue mojito'}, price: '4,000', category: 'mojitos', image: 'https://images.unsplash.com/photo-1600275669439-14e40452d20b?q=80&w=300&auto=format&fit=crop' },
+            { id: 63, name: {ku: 'مۆهیتۆی بلوبێری', ar: 'موهيتو بلوبيري', en: 'Blueberry Mojito'}, description: {ku: 'مۆهیتۆ بە تامی بلوبێری', ar: 'موهيتو بنكهة التوت الأزرق', en: 'Mojito with blueberry flavor'}, price: '4,000', category: 'mojitos', image: 'https://images.unsplash.com/photo-1546171753-97d7676e4602?q=80&w=300&auto=format&fit=crop' },
+            { id: 64, name: {ku: 'مۆهیتۆ مەکسیکی تایگەر', ar: 'موهيتو مكسيكي تايجر', en: 'Tiger Mexican Mojito'}, description: {ku: 'مۆهیتۆ تێکەڵ بە خواردنەوەی وزەبەخشی تایگەر', ar: 'موهيتو ممزوج بمشروب الطاقة تايجر', en: 'Mojito mixed with Tiger energy drink'}, price: '4,000', category: 'mojitos', image: 'https://images.unsplash.com/photo-1563227812-0ea4c22e6cc8?q=80&w=300&auto=format&fit=crop' },
+            { id: 65, name: {ku: 'مۆهیتۆ مەکسیکی ڕێد بۆڵ', ar: 'موهيتو مكسيكي ريدبول', en: 'Red Bull Mexican Mojito'}, description: {ku: 'مۆهیتۆ تێکەڵ بە وزەبەخشی ڕێد بۆڵ', ar: 'موهيتو ممزوج بمشروب الطاقة ريدبول', en: 'Mojito mixed with Red Bull'}, price: '4,000', category: 'mojitos', image: 'https://images.unsplash.com/photo-1556881286-fc6915169721?q=80&w=300&auto=format&fit=crop' },
+
+            // Fresh Juices
+            { id: 66, name: {ku: 'پرتەقاڵ', ar: 'برتقال', en: 'Orange'}, description: {ku: 'شەربەتی پرتەقاڵی فرێش و سروشتی', ar: 'عصير برتقال طازج وطبيعي', en: 'Fresh natural orange juice'}, price: '3,000', category: 'fresh_juices', image: 'https://images.unsplash.com/photo-1613478223719-2ab802602423?q=80&w=300&auto=format&fit=crop' },
+            { id: 67, name: {ku: 'هەنار', ar: 'رمان', en: 'Pomegranate'}, description: {ku: 'شەربەتی هەناری سروشتی', ar: 'عصير رمان طبيعي', en: 'Natural pomegranate juice'}, price: '4,000', category: 'fresh_juices', image: 'https://images.unsplash.com/photo-1605270634645-12df5dc21199?q=80&w=300&auto=format&fit=crop' },
+            { id: 68, name: {ku: 'لێمۆ', ar: 'ليمون ونعناع', en: 'Lemon Mint'}, description: {ku: 'شەربەتی لێمۆی فرێش بە نەعناعەوە', ar: 'عصير ليمون طازج مع نعناع', en: 'Fresh lemon juice with mint'}, price: '2,500', category: 'fresh_juices', image: 'https://images.unsplash.com/photo-1513379733131-47fc74b45fc7?q=80&w=300&auto=format&fit=crop' },
+            { id: 69, name: {ku: 'ئەنەناس', ar: 'أناناس', en: 'Pineapple'}, description: {ku: 'شەربەتی ئەنەناسی سروشتی', ar: 'عصير أناناس طبيعي', en: 'Natural pineapple juice'}, price: '5,000', category: 'fresh_juices', image: 'https://images.unsplash.com/photo-1550828520-4cb496926fc9?q=80&w=300&auto=format&fit=crop' },
+            { id: 70, name: {ku: 'سندی', ar: 'جريب فروت', en: 'Grapefruit'}, description: {ku: 'شەربەتی سندی سروشتی', ar: 'عصير جريب فروت طبيعي', en: 'Natural grapefruit juice'}, price: '3,500', category: 'fresh_juices', image: 'https://images.unsplash.com/photo-1578500271165-8b8edeb0f576?q=80&w=300&auto=format&fit=crop' },
+            { id: 71, name: {ku: 'سێو', ar: 'تفاح', en: 'Apple'}, description: {ku: 'شەربەتی سێوی فرێش', ar: 'عصير تفاح طازج', en: 'Fresh apple juice'}, price: '3,000', category: 'fresh_juices', image: 'https://images.unsplash.com/photo-1567175513531-bc6e2fb25a9f?q=80&w=300&auto=format&fit=crop' },
+
+            // Smoothies
+            { id: 72, name: {ku: 'مانگۆ', ar: 'مانجو', en: 'Mango'}, description: {ku: 'سموزی مانگۆی فرێش و خەست', ar: 'سموثي مانجو طازج وكثيف', en: 'Fresh thick mango smoothie'}, price: '5,000', category: 'smoothies', image: 'https://images.unsplash.com/photo-1543362905-f2494007dfbd?q=80&w=300&auto=format&fit=crop' },
+            { id: 73, name: {ku: 'شلک', ar: 'فراولة', en: 'Strawberry'}, description: {ku: 'سموزی شلیکی تەزێندەر', ar: 'سموثي فراولة منعش', en: 'Refreshing strawberry smoothie'}, price: '4,500', category: 'smoothies', image: 'https://images.unsplash.com/photo-1553530666-ba11a7ddbb54?q=80&w=300&auto=format&fit=crop' },
+            { id: 74, name: {ku: 'شلک و مۆز', ar: 'فراولة وموز', en: 'Strawberry Banana'}, description: {ku: 'تێکەڵەی سموزی شلک و مۆز', ar: 'مزيج سموثي الفراولة والموز', en: 'Strawberry and banana smoothie mix'}, price: '5,000', category: 'smoothies', image: 'https://images.unsplash.com/photo-1570162598379-99a3ab66601f?q=80&w=300&auto=format&fit=crop' },
+            { id: 75, name: {ku: 'هەنجیر', ar: 'تين', en: 'Fig'}, description: {ku: 'سموزی هەنجیری سروشتی', ar: 'سموثي تين طبيعي', en: 'Natural fig smoothie'}, price: '4,500', category: 'smoothies', image: 'https://images.unsplash.com/photo-1590453303577-fb467812ee64?q=80&w=300&auto=format&fit=crop' },
+            { id: 76, name: {ku: 'ئەنەناس', ar: 'أناناس', en: 'Pineapple'}, description: {ku: 'سموزی ئەنەناسی تایبەت', ar: 'سموثي أناناس خاص', en: 'Special pineapple smoothie'}, price: '6,000', category: 'smoothies', image: 'https://images.unsplash.com/photo-1502741338009-cac2772e18bc?q=80&w=300&auto=format&fit=crop' },
+            { id: 77, name: {ku: 'قۆخ', ar: 'خوخ', en: 'Peach'}, description: {ku: 'سموزی قۆخی فرێش', ar: 'سموثي خوخ طازج', en: 'Fresh peach smoothie'}, price: '4,000', category: 'smoothies', image: 'https://images.unsplash.com/photo-1628557044797-f21a177c37ec?q=80&w=300&auto=format&fit=crop' },
+            { id: 78, name: {ku: 'ئەڤۆکادۆ', ar: 'أفوكادو', en: 'Avocado'}, description: {ku: 'سموزی ئەڤۆکادۆی تەندروست', ar: 'سموثي أفوكادو صحي', en: 'Healthy avocado smoothie'}, price: '3,000', category: 'smoothies', image: 'https://images.unsplash.com/photo-1604085792782-8d92f272d4d2?q=80&w=300&auto=format&fit=crop' },
+
+            // Soft Drinks & Water
+            { id: 79, name: {ku: 'ئاو', ar: 'ماء', en: 'Water'}, description: {ku: 'ئاوی کانزایی پاک', ar: 'مياه معدنية نقية', en: 'Pure mineral water'}, price: '250', category: 'soft_drinks', image: 'https://images.unsplash.com/photo-1548839140-29a749e1bc4e?q=80&w=300&auto=format&fit=crop' },
+            { id: 80, name: {ku: 'تایگەر', ar: 'تايجر', en: 'Tiger'}, description: {ku: 'خواردنەوەی وزەبەخشی تایگەر', ar: 'مشروب طاقة تايجر', en: 'Tiger energy drink'}, price: '2,000', category: 'soft_drinks', image: 'https://images.unsplash.com/photo-1622543925917-763c34d1a86e?q=80&w=300&auto=format&fit=crop' },
+            { id: 81, name: {ku: 'ڕێد بۆڵ', ar: 'ريدبول', en: 'Red Bull'}, description: {ku: 'خواردنەوەی وزەبەخشی ڕێد بۆڵ', ar: 'مشروب طاقة ريدبول', en: 'Red Bull energy drink'}, price: '3,000', category: 'soft_drinks', image: 'https://images.unsplash.com/photo-1622543925917-763c34d1a86e?q=80&w=300&auto=format&fit=crop' },
+            { id: 82, name: {ku: 'کۆلا', ar: 'كولا', en: 'Cola'}, description: {ku: 'خواردنەوەی گازی', ar: 'مشروب غازي', en: 'Soft drink'}, price: '1,000', category: 'soft_drinks', image: 'https://images.unsplash.com/photo-1622483767028-3f66f32aef97?q=80&w=300&auto=format&fit=crop' },
+            { id: 83, name: {ku: 'سپرایت', ar: 'سبرايت', en: 'Sprite'}, description: {ku: 'خواردنەوەی گازی', ar: 'مشروب غازي', en: 'Soft drink'}, price: '1,000', category: 'soft_drinks', image: 'https://images.unsplash.com/photo-1625772299848-391b6a87d7b3?q=80&w=300&auto=format&fit=crop' }
+        ];
+
+        // جۆرەکان (Categories)
+        const categories = [
+            { id: 'all', name: {ku: 'هەمووی', ar: 'الكل', en: 'All'} },
+            { id: 'hot_drinks', name: {ku: 'گەرمەکان', ar: 'مشروبات ساخنة', en: 'Hot Drinks'} },
+            { id: 'cold_drinks', name: {ku: 'ساردەکان', ar: 'مشروبات باردة', en: 'Cold Drinks'} },
+            { id: 'mojitos', name: {ku: 'مۆکتیلەکان', ar: 'موهيتو', en: 'Mojitos'} },
+            { id: 'fresh_juices', name: {ku: 'شەربەتی فرێش', ar: 'عصائر طازجة', en: 'Fresh Juices'} },
+            { id: 'smoothies', name: {ku: 'سموزی', ar: 'سموثي', en: 'Smoothies'} },
+            { id: 'cakes', name: {ku: 'کێک و شیرینی', ar: 'كيك وحلويات', en: 'Cakes'} },
+            { id: 'pancakes', name: {ku: 'پەنکەیک', ar: 'بان كيك', en: 'Pancakes'} },
+            { id: 'crepes', name: {ku: 'کرێپ', ar: 'كريب', en: 'Crepes'} },
+            { id: 'waffles', name: {ku: 'وافل', ar: 'وافل', en: 'Waffles'} },
+            { id: 'soft_drinks', name: {ku: 'گازی و ئاو', ar: 'غازيات وماء', en: 'Soft Drinks'} }
+        ];
+
+        let currentLang = 'ku';
+        let currentCategory = 'all';
+        let searchQuery = '';
+        let cart = [];
+
+        // وەرگرتنی ئيڵێمێنتەکانی ناو HTML
+        const categoryTabsContainer = document.getElementById('categoryTabs');
+        const menuContainer = document.getElementById('menuContainer');
+        const searchInput = document.getElementById('searchInput');
+        const searchIcon = document.getElementById('searchIcon');
+
+        // نەخشەی گۆڕینی زمان (Language Switcher)
+        function setLanguage(lang) {
+            currentLang = lang;
+            
+            // گۆڕینی ئاراستەی لاپەڕە (RTL/LTR)
+            document.documentElement.lang = lang;
+            document.documentElement.dir = (lang === 'en') ? 'ltr' : 'rtl';
+
+            // نوێکردنەوەی ستایلی دوگمەکانی زمان
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.remove('bg-white', 'text-orange-500', 'shadow-sm');
+                btn.classList.add('text-gray-500');
+            });
+            const activeBtn = document.getElementById(`btn-lang-${lang}`);
+            activeBtn.classList.remove('text-gray-500');
+            activeBtn.classList.add('bg-white', 'text-orange-500', 'shadow-sm');
+
+            // نوێکردنەوەی دەقەکانی ڕووکار
+            searchInput.placeholder = uiTranslations[lang].searchPlaceholder;
+            document.getElementById('cartTitle').innerText = uiTranslations[lang].cartTitle;
+            document.getElementById('cartSubtitle').innerText = uiTranslations[lang].cartSubtitle;
+            document.getElementById('cartTotalLabel').innerText = uiTranslations[lang].total;
+
+            // گونجاندنی ئایکۆنی گەڕان بۆ RTL/LTR
+            if (lang === 'en') {
+                searchInput.classList.remove('pr-11', 'pl-4');
+                searchInput.classList.add('pl-11', 'pr-4');
+                searchIcon.classList.remove('right-4');
+                searchIcon.classList.add('left-4');
+            } else {
+                searchInput.classList.remove('pl-11', 'pr-4');
+                searchInput.classList.add('pr-11', 'pl-4');
+                searchIcon.classList.remove('left-4');
+                searchIcon.classList.add('right-4');
+            }
+
+            // دووبارە ڕێندەرکردنەوە
+            renderCategories();
+            renderMenuItems();
+            updateCartUI();
+        }
+
+        // نەخشەی دروستکردنی دوگمەی جۆرەکان
+        function renderCategories() {
+            categoryTabsContainer.innerHTML = '';
+            categories.forEach(category => {
+                const isActive = currentCategory === category.id;
+                const button = document.createElement('button');
+                button.className = `whitespace-nowrap px-5 py-2 rounded-full text-sm font-medium transition-all duration-200 ${isActive ? 'bg-orange-500 text-white shadow-md' : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'}`;
+                button.innerText = category.name[currentLang];
+                button.onclick = () => {
+                    currentCategory = category.id;
+                    renderCategories();
+                    renderMenuItems();
+                };
+                categoryTabsContainer.appendChild(button);
+            });
+        }
+
+        // نەخشەی دروستکردنی کاردی ئایتمەکان
+        function renderMenuItems() {
+            menuContainer.innerHTML = '';
+            
+            // فلتەرکردنی داتاکان بەپێی جۆر و گەڕان
+            const filteredData = menuData.filter(item => {
+                const matchCategory = currentCategory === 'all' || item.category === currentCategory;
+                const searchLower = searchQuery.toLowerCase();
+                const matchSearch = item.name[currentLang].toLowerCase().includes(searchLower) || 
+                                    item.description[currentLang].toLowerCase().includes(searchLower);
+                return matchCategory && matchSearch;
+            });
+
+            if (filteredData.length === 0) {
+                menuContainer.innerHTML = `
+                    <div class="text-center py-10 text-gray-400">
+                        <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <p>${uiTranslations[currentLang].emptySearch}</p>
+                    </div>`;
+                return;
+            }
+
+            filteredData.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'flex bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-300 p-3 gap-4 items-center border border-gray-100 group cursor-pointer';
+                
+                card.innerHTML = `
+                    <div class="relative w-24 h-24 shrink-0 overflow-hidden rounded-xl">
+                        <img src="${item.image}" alt="${item.name[currentLang]}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                    </div>
+                    <div class="flex-1 py-1">
+                        <h3 class="text-base font-bold text-gray-800 mb-1">${item.name[currentLang]}</h3>
+                        <p class="text-xs text-gray-500 mb-2 line-clamp-2 leading-relaxed">${item.description[currentLang]}</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-orange-600 font-bold text-sm bg-orange-50 px-2 py-0.5 rounded-lg" dir="ltr">${item.price} <span class="text-xs font-normal ml-1">${uiTranslations[currentLang].currency}</span></span>
+                            
+                            <button onclick="addToCart(${item.id})" class="w-8 h-8 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center text-gray-600 hover:bg-orange-500 hover:text-white hover:border-orange-500 transition-all active:scale-95">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                menuContainer.appendChild(card);
+            });
+        }
+
+        // --- نەخشەکانی سەبەتەی داواکارییەکان ---
+        
+        function addToCart(id) {
+            const item = menuData.find(i => i.id === id);
+            const existingItem = cart.find(i => i.id === id);
+            
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({ ...item, quantity: 1 });
+            }
+            
+            updateCartUI();
+            
+            const fab = document.getElementById('cartFab');
+            fab.classList.remove('hidden');
+            fab.classList.add('scale-125');
+            setTimeout(() => fab.classList.remove('scale-125'), 200);
+        }
+
+        function updateQuantity(id, change) {
+            const itemIndex = cart.findIndex(i => i.id === id);
+            if (itemIndex > -1) {
+                cart[itemIndex].quantity += change;
+                if (cart[itemIndex].quantity <= 0) {
+                    cart.splice(itemIndex, 1);
+                }
+            }
+            updateCartUI();
+            
+            if (cart.length === 0) {
+                toggleCart();
+            }
+        }
+
+        function toggleCart() {
+            const modal = document.getElementById('cartModal');
+            if(cart.length > 0 || !modal.classList.contains('hidden')) {
+                modal.classList.toggle('hidden');
+            }
+        }
+
+        function updateCartUI() {
+            const fab = document.getElementById('cartFab');
+            const countBadge = document.getElementById('cartCount');
+            const container = document.getElementById('cartItemsContainer');
+            const totalElement = document.getElementById('cartTotal');
+            
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            
+            if (totalItems > 0) {
+                fab.classList.remove('hidden');
+                countBadge.innerText = totalItems;
+            } else {
+                fab.classList.add('hidden');
+            }
+
+            container.innerHTML = '';
+            let totalPrice = 0;
+
+            cart.forEach(item => {
+                const priceNumber = parseInt(item.price.replace(/,/g, ''));
+                totalPrice += priceNumber * item.quantity;
+                
+                // گونجاندنی پەراوێزەکان بەپێی ئاراستەی زمان
+                const paddingClass = currentLang === 'en' ? 'pr-3' : 'pl-3';
+                
+                container.innerHTML += `
+                    <div class="flex justify-between items-center border-b border-gray-100 py-3">
+                        <div class="flex-1 ${paddingClass}">
+                            <h4 class="font-bold text-gray-800 text-sm md:text-base">${item.name[currentLang]}</h4>
+                            <p class="text-orange-500 text-sm mt-0.5 font-medium" dir="ltr">${item.price} ${uiTranslations[currentLang].currency}</p>
+                        </div>
+                        <div class="flex items-center gap-3 bg-gray-50 rounded-xl p-1.5 border border-gray-100" dir="ltr">
+                            <button onclick="updateQuantity(${item.id}, -1)" class="w-8 h-8 bg-white rounded-lg shadow-sm text-gray-700 font-bold flex items-center justify-center hover:text-red-500 transition-colors">-</button>
+                            <span class="text-base font-bold w-5 text-center text-gray-800">${item.quantity}</span>
+                            <button onclick="updateQuantity(${item.id}, 1)" class="w-8 h-8 bg-white rounded-lg shadow-sm text-gray-700 font-bold flex items-center justify-center hover:text-orange-500 transition-colors">+</button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            totalElement.innerText = `${totalPrice.toLocaleString()} ${uiTranslations[currentLang].currency}`;
+            totalElement.dir = "ltr";
+        }
+
+        // چالاککردنی سیستەمی گەڕان
+        searchInput.addEventListener('input', (e) => {
+            searchQuery = e.target.value;
+            renderMenuItems();
+        });
+
+        // کارپێکردنی سەرەتایی (بە زمانی کوردی)
+        setLanguage('ku');
+
+    </script>
+</body>
+</html>
